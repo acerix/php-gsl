@@ -20,7 +20,8 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
     if ('ping'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
         $session_id = substr($buf,4,20);
-        $server_log_id = current(unpack('P',substr($buf,24,8)));
+        $server_log_id_binary = substr($buf,24,8);
+        //$server_log_id = current(unpack('V',$server_log_id_binary));
         $nonce = substr($buf,32);
 
         // @todo sample data
@@ -28,7 +29,7 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
         $gsl_ip = '127.0.0.1';
         $gsl_port = '42001';
 
-        $send_buffer = 'pong' . pack('P', $server_log_id) . hash('sha1', $session_id . $nonce, true) . pack('v', $player_count);
+        $send_buffer = 'pong' . $server_log_id_binary . hash('sha1', $session_id . $nonce, true) . pack('v', $player_count);
 
         socket_sendto(
             $udp_socket,

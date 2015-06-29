@@ -6,7 +6,7 @@ CREATE TABLE country (
   code3 char(3) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   latitude float NOT NULL,
   longitude float NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+);
 
 INSERT INTO country (id, common_name, code2, code3, latitude, longitude) VALUES
 (4, 'Afghanistan', 'AF', 'AFG', 33, 65),
@@ -258,10 +258,10 @@ CREATE TABLE game (
   version varchar(255) NOT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated timestamp NULL DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+);
 
-INSERT INTO game (id, name, version) VALUES
-(1, 'Game', '0.1');
+INSERT INTO game (id, name, version, created, updated) VALUES
+(1, 'Game', '0.1', '2015-01-01 05:00:00', NULL);
 
 CREATE TABLE `server` (
   id mediumint(8) unsigned NOT NULL,
@@ -279,21 +279,20 @@ CREATE TABLE `server` (
   `session` binary(20) NOT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated timestamp NULL DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+);
 
-INSERT INTO server (id, game_id, name, host, port, country_id, latitude, longitude, status, latency, players, password, session) VALUES
-(1, 1, 'test', 'localhost', 42002, 124, 45.421398, -75.691902, 'new', 1, 0, 'test', 0x0000000000000000000000000000000000000000);
+INSERT INTO server (id, game_id, name, host, port, country_id, latitude, longitude, status, latency, players, password, session, created, updated) VALUES
+(1, 1, 'Test', 'localhost', 42002, 124, 45.421398, -75.691902, 'new', NULL, NULL, 'test123', 0x0000000000000000000000000000000000000000, '2015-01-01 05:00:00', NULL);
 
 CREATE TABLE server_log (
-  id bigint(20) unsigned NOT NULL,
+  id int(10) unsigned NOT NULL,
   server_id mediumint(8) unsigned NOT NULL,
   created timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
   nonce binary(20) NOT NULL,
   `status` enum('new','online') NOT NULL DEFAULT 'new',
   latency smallint(5) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
+);
 
 ALTER TABLE country
   ADD PRIMARY KEY (id),
@@ -321,7 +320,6 @@ ALTER TABLE server_log
   ADD PRIMARY KEY (id),
   ADD KEY server_id (server_id);
 
-
 ALTER TABLE country
   MODIFY id smallint(5) unsigned NOT NULL AUTO_INCREMENT;
 ALTER TABLE game
@@ -329,4 +327,4 @@ ALTER TABLE game
 ALTER TABLE server
   MODIFY id mediumint(8) unsigned NOT NULL AUTO_INCREMENT;
 ALTER TABLE server_log
-  MODIFY id bigint(20) unsigned NOT NULL AUTO_INCREMENT;
+  MODIFY id int(10) unsigned NOT NULL AUTO_INCREMENT;

@@ -120,7 +120,7 @@ while ($game = $query_games->fetch())
 
         // Send packet
 
-        $send_buffer = 'ping' . $r->session . pack('P',$server_log_id) . $nonce;
+        $send_buffer = 'ping' . $r->session . pack('V',$server_log_id) . $nonce;
 
         socket_sendto(
             $udp_socket,
