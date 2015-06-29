@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+require dirname(__FILE__).'/../conf/gsl.php';
+
 /*
 * Dummy server, all it does is respond to pings
 */
@@ -36,8 +38,8 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
             $send_buffer,
             strlen($send_buffer),
             0,
-            $gsl_ip,
-            $gsl_port
+            $gsl_config['pong_ip'],
+            $gsl_config['pong_port']
         );
 
     }

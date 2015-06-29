@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-include dirname(__FILE__).'/../conf/db.php';
+require dirname(__FILE__).'/../conf/db.php';
 
 /*
 * Listen for ping responses and update server status
