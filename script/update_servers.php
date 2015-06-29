@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-include '../conf/db.php';
+include dirname(__FILE__).'/../conf/db.php';
 
 $query_games = $db->prepare("
 SELECT
@@ -17,16 +17,20 @@ ORDER BY
 
 $query_servers = $db->prepare("
 SELECT
-    id,
-    name,
-    session,
-    host,
-    port,
-    status,
-    latency,
-    players
+    server.id,
+    server.name,
+    server.session,
+    server.host,
+    server.port,
+    server.status,
+    server.latency,
+    server.players
 FROM
     server
+LEFT JOIN
+    country
+        ON
+            country.id = server.country_id
 WHERE
     game_id = ?
 AND
@@ -91,11 +95,11 @@ while ($game = $query_games->fetch())
             if ($ip===$r->host)
             {
                 $query_update_server_status->execute(
-                            array(
-                                    'dns fail',
-                                    $r->id
-                            )
-                    );
+                    array(
+                        'dns fail',
+                        $r->id
+                    )
+                );
                 continue;
             }
         }
@@ -111,16 +115,12 @@ while ($game = $query_games->fetch())
             )
         );
 
+        $server_log_id = (int)$db->lastInsertId();
+
 
         // Send packet
 
-        $send_data = array(
-            'ping',
-            $r->session,
-            $nonce
-        );
-
-        $send_buffer = join($send_data);
+        $send_buffer = 'ping' . $r->session . pack('P',$server_log_id) . $nonce;
 
         socket_sendto(
             $udp_socket,
@@ -130,7 +130,6 @@ while ($game = $query_games->fetch())
             $ip,
             $r->port
         );
-
 
         /*
         * Update server list with previous ping result
@@ -156,4 +155,3 @@ while ($game = $query_games->fetch())
     );
 
 }
-

@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-include '../conf/db.php';
+include dirname(__FILE__).'/../conf/db.php';
 
 $query_games = $db->prepare("
 SELECT
@@ -32,3 +32,4 @@ file_put_contents(
     '../htdocs/games.bson',
     bson_encode($games)
 );
+
