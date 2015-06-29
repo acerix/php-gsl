@@ -35,6 +35,7 @@ UPDATE
     server_log
 SET
     status = 'online',
+    nonce = NULL,
     latency = 1000 * (NOW(6) - created),
     players = ?
 WHERE

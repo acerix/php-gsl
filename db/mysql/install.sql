@@ -288,7 +288,7 @@ CREATE TABLE server_log (
   id int(10) unsigned NOT NULL,
   server_id mediumint(8) unsigned NOT NULL,
   created timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
-  nonce binary(20) NOT NULL,
+  nonce binary(20) NULL,
   `status` enum('new','online') NOT NULL DEFAULT 'new',
   latency smallint(5) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL
