@@ -275,6 +275,7 @@ CREATE TABLE `server` (
   `status` enum('new','online','timeout','dns fail','disconnected') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'new',
   latency smallint(5) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL,
+  max_players smallint(5) unsigned DEFAULT NULL,
   `password` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
   `session` binary(20) NOT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
