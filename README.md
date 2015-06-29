@@ -2,7 +2,7 @@
 PHP game server list.  Game servers can advertise their info, and players can get a list of active servers, which is updated regularly by pinging the servers.
 
 # Requirements
-* Web Server with PHP 5.6+ and PHP extensions: pdo_mysql, sockets
+* Web Server with PHP 5.6+ including extensions: pdo_mysql, sockets, mongo
 * MySQL 5.6+
 
 # Installation
@@ -13,6 +13,6 @@ PHP game server list.  Game servers can advertise their info, and players can ge
 * Make ./htdocs/ the root of a virtual host in your web server. For example, point http://yourserver/ to ./htdocs/
 
 # URLs
-* The default server advertise URL is: http://yourserver/advertise/
+* The default server announce URL is: http://yourserver/announce/
 * Game List: /games.bson
 * Server List for Game 1: /game1_servers.bson
