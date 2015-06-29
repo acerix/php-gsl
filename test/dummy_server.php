@@ -40,5 +40,7 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
             $gsl_port
         );
 
+        echo 'ping'.PHP_EOL;
+
     }
 }

@@ -86,6 +86,8 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
                     )
                 );
 
+                echo 'pong'.PHP_EOL;
+
             }
         }
 
