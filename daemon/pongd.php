@@ -7,7 +7,7 @@ include dirname(__FILE__).'/../conf/db.php';
 * Listen for ping responses and update server status
 */
 
-$receive_len = 34;
+$receive_len = 30;
 
 $udp_socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
@@ -85,8 +85,6 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
                         $server_log->server_id
                     )
                 );
-
-                echo 'pong'.PHP_EOL;
 
             }
         }

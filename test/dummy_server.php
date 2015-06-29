@@ -5,7 +5,7 @@
 * Dummy server, all it does is respond to pings
 */
 
-$receive_len = 52;
+$receive_len = 48;
 
 $udp_socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
@@ -20,9 +20,9 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
     if ('ping'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
         $session_id = substr($buf,4,20);
-        $server_log_id_binary = substr($buf,24,8);
+        $server_log_id_binary = substr($buf,24,4);
         //$server_log_id = current(unpack('V',$server_log_id_binary));
-        $nonce = substr($buf,32);
+        $nonce = substr($buf,28);
 
         // @todo sample data
         $player_count = rand(0,65535);
@@ -39,8 +39,6 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
             $gsl_ip,
             $gsl_port
         );
-
-        echo 'ping'.PHP_EOL;
 
     }
 }

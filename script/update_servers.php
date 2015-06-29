@@ -120,9 +120,6 @@ while ($game = $query_games->fetch())
 
         // Send packet
 
-        echo 'ping'.PHP_EOL;
-
-
         $send_buffer = 'ping' . $r->session . pack('V',$server_log_id) . $nonce;
 
         socket_sendto(
