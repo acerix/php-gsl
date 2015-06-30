@@ -1,10 +1,51 @@
 #!/usr/bin/env php
 <?php
 
+/*
+* Dummy server, all it does is respond to pings
+*/
+
+
 require dirname(__FILE__).'/../conf/gsl.php';
 
 /*
-* Dummy server, all it does is respond to pings
+* Connect to GSL
+*/
+
+$announce_request_data = array(
+    'game_name' => 'Game',
+    'game_version' => '0.1',
+    'game_mode' => 'Hard',
+    'name' => 'MyServer',
+    'password' => 'My$ecurePassword',
+    'host' => 'localhost',
+    'port' => 42002,
+    'country' => 'CA',
+    'latitude' => 45.42,
+    'longitude' => -75.69,
+    'max_players' => 32
+);
+
+$json_response_data = file_get_contents($gsl_config['announce_url'].'?'.http_build_query($announce_request_data));
+$response_data = json_decode($json_response_data);
+
+if (!isset($response_data->message))
+{
+    die('Invalid GSL response');
+}
+
+if ('OK'!==$response_data->message)
+{
+    die('GSL Error: '.$response_data->message);
+}
+
+$session_id = $response_data->session;
+$pong_ip = $response_data->pong_ip;
+$pong_port = $response_data->pong_port;
+
+
+/*
+* Listen for UDP and respond to pings
 */
 
 $receive_len = 48;
@@ -13,7 +54,7 @@ $udp_socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
 socket_bind($udp_socket, '0.0.0.0', 42002);
 
-// pass by refs
+// recv data
 $buf = '';
 $name = '';
 $port = 0;
@@ -21,15 +62,17 @@ $port = 0;
 while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
     if ('ping'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
-        $session_id = substr($buf,4,20);
+        $ping_session_id = substr($buf,4,20);
+        if ($ping_session_id!==$session_id) {
+            //die('Invalid session ID received');
+            continue;
+        }
         $server_log_id_binary = substr($buf,24,4);
         //$server_log_id = current(unpack('V',$server_log_id_binary));
         $nonce = substr($buf,28);
 
         // @todo sample data
         $player_count = rand(0,65535);
-        $gsl_ip = '127.0.0.1';
-        $gsl_port = '42001';
 
         $send_buffer = 'pong' . $server_log_id_binary . hash('sha1', $session_id . $nonce, true) . pack('v', $player_count);
 
@@ -38,8 +81,8 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
             $send_buffer,
             strlen($send_buffer),
             0,
-            $gsl_config['pong_ip'],
-            $gsl_config['pong_port']
+            $pong_ip,
+            $pong_port
         );
 
     }

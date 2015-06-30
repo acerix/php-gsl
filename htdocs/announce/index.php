@@ -7,7 +7,9 @@ require dirname(__FILE__).'/../../conf/db.php';
 $gsl_ip = '127.0.0.1';
 $gsl_port = '42001';
 
-$result = array();
+$result = array(
+    'message' => ''
+);
 
 function exitWithMessage($message) {
     global $result;
@@ -23,6 +25,7 @@ function exitWithMessage($message) {
 if (!isset(
     $_REQUEST['game_name'],
     $_REQUEST['game_version'],
+    $_REQUEST['game_mode'],
     $_REQUEST['name'],
     $_REQUEST['password'],
     $_REQUEST['port']
@@ -41,6 +44,8 @@ if (isset($_REQUEST['latitude'], $_REQUEST['longitude']))
 else {
     $latitude = $longitude = NULL;
 }
+
+$max_players = isset($_REQUEST['max_players']) ? (int)$_REQUEST['max_players'] : 0;
 
 
 /*
@@ -68,6 +73,88 @@ $query_find_game->execute(
 $game = $query_find_game->fetch() or exitWithMessage('Game not found');
 
 
+/*
+ * Find game mode
+ */
+
+$query_find_game_mode = $db->prepare("
+SELECT
+    id
+FROM
+    game_mode
+WHERE
+    game_id = ?
+AND
+    name = ?
+");
+
+$query_find_game_mode->execute(
+    array(
+        $game->id,
+        $_REQUEST['game_mode']
+    )
+);
+
+$game_mode = $query_find_game_mode->fetch() or exitWithMessage('Game mode not found');
+
+
+
+/*
+ * Find country
+ */
+
+$country_id = NULL;
+
+if (isset($_REQUEST['country']))
+{
+
+   $country_search_field = NULL;
+
+    switch (strlen($_REQUEST['country']))
+    {
+        case 2:
+            $query_find_country = $db->prepare("
+SELECT
+    id
+FROM
+    country
+WHERE
+    code2 = ?
+");
+            break;
+
+        case 3:
+            $query_find_country = $db->prepare("
+SELECT
+    id
+FROM
+    country
+WHERE
+    code3 = ?
+");
+            break;
+
+        default:
+            $query_find_country = $db->prepare("
+SELECT
+    id
+FROM
+    country
+WHERE
+    common_name = ?
+");
+            break;
+    }
+
+    $query_find_country->execute(
+        array(
+            $_REQUEST['country']
+        )
+    );
+
+    $country = $query_find_country->fetch() or exitWithMessage('Country not found');
+    $country_id = (int)$country->id;
+}
 
 /*
  * Find server and update, or insert new server
@@ -80,19 +167,20 @@ SELECT
 FROM
     server
 WHERE
-    game_id = ?
+    game_mode_id = ?
 AND
     name = ?
 ");
 
 $query_find_server->execute(
     array(
-        $game->id,
+        $game_mode->id,
         $_REQUEST['name']
     )
 );
 
 $session_id = openssl_random_pseudo_bytes(20);
+
 
 if ($server = $query_find_server->fetch())
 {
@@ -108,8 +196,12 @@ SET
     session = ?,
     host = ?,
     port = ?,
+    country_id = ?,
     latitude = ?,
     longitude = ?,
+    max_players = ?,
+    password = ?,
+    status = 'reconnecting',
     updated = NOW()
 WHERE
     id = ?
@@ -119,8 +211,11 @@ WHERE
             $session_id,
             $hostname,
             $_REQUEST['port'],
+            $country_id,
             $latitude,
             $longitude,
+            $max_players,
+            password_hash($_REQUEST['password'], PASSWORD_DEFAULT),
             $server->id
         )
     );
@@ -134,12 +229,14 @@ else
 INSERT INTO
     server
 (
-    game_id,
+    game_mode_id,
     name,
     host,
     port,
+    country_id,
     latitude,
     longitude,
+    max_players,
     password,
     session
 )
@@ -152,18 +249,22 @@ VALUES
     ?,
     ?,
     ?,
+    ?,
+    ?,
     ?
 )
 ");
     $query_insert_server->execute(
         array(
-            $game->id,
+            $game_mode->id,
             $_REQUEST['name'],
             $hostname,
             $_REQUEST['port'],
+            $country_id,
             $latitude,
             $longitude,
-            password_hash($_REQUEST['password'], PASSWORD_DEFAULT),
+            $max_players,
+            password_hash($_REQUEST['password'], PASSWORD_DEFAULT), // update password hash in case previous was using an old algo (maybe just a useless waste of CPU?)
             $session_id
         )
     );

@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+require dirname(__FILE__).'/../conf/gsl.php';
 require dirname(__FILE__).'/../conf/db.php';
 
 $query_games = $db->prepare("
@@ -15,6 +16,16 @@ ORDER BY
     version
 ");
 
+$query_game_modes = $db->prepare("
+SELECT
+    id,
+    name
+FROM
+    game_mode
+WHERE
+    game_id = ?
+");
+
 $query_servers = $db->prepare("
 SELECT
     server.id,
@@ -24,7 +35,10 @@ SELECT
     server.port,
     server.status,
     server.latency,
-    server.players
+    server.players,
+    server.max_players,
+    server.setting,
+    country.code3 country_code
 FROM
     server
 LEFT JOIN
@@ -32,9 +46,9 @@ LEFT JOIN
         ON
             country.id = server.country_id
 WHERE
-    game_id = ?
+    game_mode_id = ?
 AND
-    status <> 'disconnected'
+    status NOT IN ('disconnected','disabled')
 ");
 
 $query_insert_server_log = $db->prepare("
@@ -66,92 +80,129 @@ $query_games->execute();
 
 while ($game = $query_games->fetch())
 {
-    $query_servers->execute(
+
+    $game->dir = '../htdocs/games/'.$game->name;
+
+    if (!is_dir($game->dir))
+    {
+        mkdir($game->dir);
+    }
+
+    $query_game_modes->execute(
         array(
             $game->id
         )
     );
 
-    $servers = array();
+    $game_modes = array();
 
-    while ($r = $query_servers->fetch())
+    while ($game_mode = $query_game_modes->fetch())
     {
 
-        /*
-        * Ping server
-        */
+        $game_mode->dir = $game->dir.'/'.$game_mode->name;
 
-        // Resolve IP
-
-        if (filter_var($r->host, FILTER_VALIDATE_IP))
+        if (!is_dir($game_mode->dir))
         {
-            $ip = $r->host;
-        }
-        else
-        {
-            $ip = gethostbyname($r->host);
-
-            // resolve has failed if result matches input
-            if ($ip===$r->host)
-            {
-                $query_update_server_status->execute(
-                    array(
-                        'dns fail',
-                        $r->id
-                    )
-                );
-                continue;
-            }
+            mkdir($game_mode->dir);
         }
 
-        // Generate nonce and save to db
-
-        $nonce = openssl_random_pseudo_bytes(20);
-
-        $query_insert_server_log->execute(
+        $query_servers->execute(
             array(
-                $r->id,
-                $nonce
+                $game_mode->id
             )
         );
 
-        $server_log_id = (int)$db->lastInsertId();
+        $servers = array();
 
-
-        // Send packet
-
-        $send_buffer = 'ping' . $r->session . pack('V',$server_log_id) . $nonce;
-
-        socket_sendto(
-            $udp_socket,
-            $send_buffer,
-            strlen($send_buffer),
-            0,
-            $ip,
-            $r->port
-        );
-
-        /*
-        * Update server list with previous ping result
-        */
-
-        if ('online'===$r->status)
+        while ($r = $query_servers->fetch())
         {
-            $servers[] = array(
-                (int)$r->id,
-                $r->name,
-                $r->host,
-                (int)$r->port,
-                (int)$r->latency,
-                (int)$r->players
+
+            /*
+            * Ping server
+            */
+
+            // Resolve IP
+
+            if (filter_var($r->host, FILTER_VALIDATE_IP))
+            {
+                $ip = $r->host;
+            }
+            else
+            {
+                $ip = gethostbyname($r->host);
+
+                // resolve has failed if result matches input
+                if ($ip===$r->host)
+                {
+                    $query_update_server_status->execute(
+                        array(
+                            'dns fail',
+                            $r->id
+                        )
+                    );
+                    continue;
+                }
+            }
+
+            // Generate nonce and save to db
+
+            $nonce = openssl_random_pseudo_bytes(20);
+
+            $query_insert_server_log->execute(
+                array(
+                    $r->id,
+                    $nonce
+                )
             );
+
+            $server_log_id = (int)$db->lastInsertId();
+
+
+            // Send packet
+
+            $send_buffer = 'ping' . $r->session . pack('V',$server_log_id) . $nonce;
+
+            socket_sendto(
+                $udp_socket,
+                $send_buffer,
+                strlen($send_buffer),
+                0,
+                $ip,
+                $r->port
+            );
+
+            /*
+            * Update server list with previous ping result
+            */
+
+            if ('online'===$r->status)
+            {
+                $servers[] = array(
+                    (int)$r->id,
+                    $r->name,
+                    $r->host,
+                    (int)$r->port,
+                    (int)$r->latency,
+                    (int)$r->players,
+                    (int)$r->max_players,
+                    (int)$r->setting,
+                    $r->country_code
+                );
+            }
+
         }
 
+        if (!empty($gsl_config['generate_bson']))
+        file_put_contents(
+            $game_mode->dir.'/servers.bson',
+            bson_encode($servers)
+        );
+
+        if (!empty($gsl_config['generate_json']))
+        file_put_contents(
+           $game_mode->dir.'/servers.json',
+            json_encode($servers, JSON_PRETTY_PRINT)
+        );
+
     }
-
-    file_put_contents(
-        '../htdocs/game'.$game->id.'_servers.bson',
-        bson_encode($servers)
-    );
-
 }
