@@ -118,7 +118,6 @@ while ($game = $query_games->fetch())
 
         while ($r = $query_servers->fetch())
         {
-
             /*
             * Ping server
             */
@@ -163,6 +162,16 @@ while ($game = $query_games->fetch())
             // Send packet
 
             $send_buffer = 'ping' . $r->session . pack('V',$server_log_id) . $nonce;
+
+            print(
+            'ping'
+            . ' session:' . current(unpack('H*',$r->session))
+            . ' id:' . $server_log_id
+            . ' nonce:' . current(unpack('H*',$nonce))
+            . ' ip:' .  $ip
+            . ' port:' . $r->port
+            . PHP_EOL
+            );
 
             socket_sendto(
                 $udp_socket,
