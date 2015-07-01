@@ -39,7 +39,7 @@ if ('OK'!==$response_data->message)
     die('GSL Error: '.$response_data->message);
 }
 
-$session_id = pack('H',$response_data->session);
+$session_id = pack('H*',$response_data->session);
 $pong_ip = $response_data->pong_ip;
 $pong_port = $response_data->pong_port;
 
