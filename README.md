@@ -5,16 +5,16 @@ PHP game server list.  Game servers can advertise their info, and players can ge
 ## Connecting Your Game Server to a GSL Server
 
 ### Requirements
-* A brain (todo)
+* Must be able to send/receive UDP, the default listing port is 42002
 
 ### Connection Information
-* Announce URL: https://gsl.pow7.com/announce/
-* Note: Until we have a valid certificate for HTTPS, please ignore warnings or change to http://
+* Announce URL: http://gsl.pow7.com/announce/
+* Note: HTTPS can be used by ignoring the invalid certificate, we plan to get a valid cert soon
 
 ### Sample Requests
 
 #### Connect
-* https://gsl.pow7.com/announce/?game_name=Game&game_version=0.1&game_mode=Hard&name=MyServer&password=My$ecurePassword&port=42002
+* http://gsl.pow7.com/announce/?game_name=Game&game_version=0.1&game_mode=Hard&name=MyServer&password=My$ecurePassword&port=42002
 * The first step is for your server to Connect. If the server "name" does not exist, it will be created with the supplied password, otherwise the password is used to login to the server account.
 
 ##### Additional Parameters
@@ -31,10 +31,13 @@ PHP game server list.  Game servers can advertise their info, and players can ge
 * "session": Your server session ID, encoded in HEX
 * "pong_ip", "pong_port": Where your server needs to respond to when receiving a ping from the GSL
 
-
 #### Disconnect
-* https://gsl.pow7.com/announce?session=0000000000000000000000000000000000000000
-* It's best to disconnect the server when shutting down
+* http://gsl.pow7.com/announce/disconnect/?session=0000000000000000000000000000000000000000
+* Your server should always disconnect when going offline (eg. reboot)
+
+#### Demo Servers
+* https://github.com/acerix/psilly-server
+* https://github.com/acerix/php-gsl/blob/master/test/dummy_server.php#L2
 
 
 ## Running Your Own GSL Server
@@ -56,5 +59,4 @@ PHP game server list.  Game servers can advertise their info, and players can ge
 * Game List: /games/games.bson
 * Mode List for a game named "Game": /games/Game/modes.bson
 * Server List for the "Hard" mode of "Game": /games/Game/Hard/servers.bson
-* (todo ... not supported yet!) Server List excluding passworded, and only including dedicated servers with anti-cheat protection: /games/Game/Hard/servers/?settings_include[]=Dedicated&settings_include[]=Anti-Cheat&settings_exclude[]=Passworded
-* BSON encoding is recommended for it's small size, but the file extensions can be changed to ".json" to view the same data in the human readable JSON format
+* BSON encoding is recommended for production as it is more compact, but the file extensions can be changed to ".json" for the JSON format which is easier to read
