@@ -10,7 +10,7 @@ $gsl_config = array(
     'pong_port' => 42001,
 
     // Whether to generate BSON, JSON, or both
-    'generate_bson' => TRUE, // best for production
+    'generate_bson' => TRUE, // better for production, needs mongodb currently
     'generate_json' => TRUE, // helpful for debugging
 
 );

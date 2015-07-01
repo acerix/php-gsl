@@ -163,6 +163,7 @@ WHERE
 $query_find_server = $db->prepare("
 SELECT
     id,
+    status,
     password
 FROM
     server
@@ -189,6 +190,11 @@ if ($server = $query_find_server->fetch())
         exitWithMessage('Invalid password');
     }
 
+    if ('disabled'===$server->status)
+    {
+        exitWithMessage('Account disabled');
+    }
+
     $query_update_server = $db->prepare("
 UPDATE
     server
@@ -200,7 +206,6 @@ SET
     latitude = ?,
     longitude = ?,
     max_players = ?,
-    password = ?,
     status = 'reconnecting',
     updated = NOW()
 WHERE
@@ -215,7 +220,6 @@ WHERE
             $latitude,
             $longitude,
             $max_players,
-            password_hash($_REQUEST['password'], PASSWORD_DEFAULT),
             $server->id
         )
     );
@@ -264,7 +268,7 @@ VALUES
             $latitude,
             $longitude,
             $max_players,
-            password_hash($_REQUEST['password'], PASSWORD_DEFAULT), // update password hash in case previous was using an old algo (maybe just a useless waste of CPU?)
+            password_hash($_REQUEST['password'], PASSWORD_DEFAULT),
             $session_id
         )
     );

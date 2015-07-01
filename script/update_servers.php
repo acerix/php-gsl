@@ -72,6 +72,8 @@ SET
     status = ?
 WHERE
     id = ?
+AND
+    status NOT IN ('disconnected','disabled')
 ");
 
 $udp_socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
