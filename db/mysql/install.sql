@@ -328,7 +328,7 @@ CREATE TABLE server_log (
   created timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
   nonce binary(20) DEFAULT NULL,
   `status` enum('new','online') NOT NULL DEFAULT 'new',
-  latency decimal(5,3) unsigned DEFAULT NULL,
+  latency decimal(8,3) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL,
   PRIMARY KEY (id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
