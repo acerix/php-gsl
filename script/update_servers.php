@@ -176,7 +176,7 @@ while ($game = $query_games->fetch())
             );
 
             /*
-            * Update server list with previous ping result
+            * Update server list
             */
 
             if ('online'===$r->status)
