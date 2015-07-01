@@ -28,16 +28,7 @@ WHERE
 
 $query_servers = $db->prepare("
 SELECT
-    server.id,
-    server.name,
-    server.session,
-    server.host,
-    server.port,
-    server.status,
-    server.latency,
-    server.players,
-    server.max_players,
-    server.setting,
+    server.*,
     country.code3 country_code
 FROM
     server
@@ -199,7 +190,9 @@ while ($game = $query_games->fetch())
                     (int)$r->players,
                     (int)$r->max_players,
                     (int)$r->setting,
-                    $r->country_code
+                    $r->country_code,
+                    (float)$r->latitude,
+                    (float)$r->longitude
                 );
             }
 
