@@ -58,6 +58,8 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
     if ('pong'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
 
+        print('pong' . PHP_EOL);
+
         $server_log_id = current(unpack('V',substr($buf,4,4)));
         $key = substr($buf,8,20);
         $player_count = current(unpack('v',substr($buf,28,2)));

@@ -76,6 +76,8 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 
         $send_buffer = 'pong' . $server_log_id_binary . hash('sha1', $session_id . $nonce, true) . pack('v', $player_count);
 
+        print('ping session_id:' . $session_id . ' nonce:' . $nonce . PHP_EOL);
+
         socket_sendto(
             $udp_socket,
             $send_buffer,
