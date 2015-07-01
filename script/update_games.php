@@ -53,13 +53,14 @@ while ($game = $query_games->fetch())
     /*
      *  Update version in database
      */
-    if (NULL!==$new_version)
+    if (NULL!==$new_version&&$game->version!==$new_version)
     {
         $query_update_game_version = $db->prepare("
 UPDATE
     game
 SET
-    version = ?
+    version = ?,
+    UPDATED = NOW()
 WHERE
     id = ?
 ");
