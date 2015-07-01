@@ -64,14 +64,12 @@ SET
 WHERE
     id = ?
 ");
-/*
         $query_update_game_version->execute(
             array(
                 $new_version,
                 $game->id
             )
         );
-*/
         $game->version = $new_version;
 
         // Disconnect all servers of this game
