@@ -61,6 +61,8 @@ $port = 0;
 
 while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
+    print('recv ' . md5($buf) . PHP_EOL);
+
     if ('ping'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
         $ping_session_id = substr($buf,4,20);
         if ($ping_session_id!==$session_id) {
