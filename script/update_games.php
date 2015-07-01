@@ -87,7 +87,7 @@ SET
 WHERE
     game_mode.game_id = ?
 ");
-        $query_update_game_version->execute(
+        $query_expire_game_servers->execute(
             array(
                 $game->id
             )
