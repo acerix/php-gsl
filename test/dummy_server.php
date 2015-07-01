@@ -61,10 +61,16 @@ $port = 0;
 
 while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
-    print('recv ' . strlen($buf) . PHP_EOL);
-
     if ('ping'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
         $ping_session_id = substr($buf,4,20);
+
+        print(
+        'test'
+        . ' ping_session_id:' . current(unpack('H*',$ping_session_id))
+        . ' session_id:' . current(unpack('H*',$session_id))
+        . PHP_EOL
+        );
+
         if ($ping_session_id!==$session_id) {
             //die('Invalid session ID received');
             continue;
