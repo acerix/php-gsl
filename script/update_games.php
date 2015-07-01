@@ -64,12 +64,14 @@ SET
 WHERE
     id = ?
 ");
+/*
         $query_update_game_version->execute(
             array(
                 $new_version,
                 $game->id
             )
         );
+*/
         $game->version = $new_version;
 
         // Disconnect all servers of this game
@@ -79,7 +81,7 @@ UPDATE
 JOIN
     game_mode
         ON
-            game_mode.id = server.game_mode
+            game_mode.id = server.game_mode_id
 SET
     server.status = 'old version',
     server.session = NULL,
