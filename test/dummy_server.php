@@ -61,21 +61,8 @@ $port = 0;
 
 while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
-        print(
-        $buf
-        . PHP_EOL
-        );
-
     if ('ping'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
         $ping_session_id = substr($buf,4,20);
-
-        print(
-        'test'
-        . ' ping_session_id:' . current(unpack('H*',$ping_session_id))
-        . ' session_id:' . current(unpack('H*',$session_id))
-        . PHP_EOL
-        );
-
         if ($ping_session_id!==$session_id) {
             //die('Invalid session ID received');
             continue;
@@ -88,8 +75,6 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
         $player_count = rand(0,65535);
 
         $send_buffer = 'pong' . $server_log_id_binary . hash('sha1', $session_id . $nonce, true) . pack('v', $player_count);
-
-        print('ping session_id:' . $session_id . ' nonce:' . $nonce . PHP_EOL);
 
         socket_sendto(
             $udp_socket,
