@@ -300,7 +300,7 @@ CREATE TABLE `server` (
   setting bit(3) NOT NULL DEFAULT b'0',
   latitude float(10,6) DEFAULT NULL,
   longitude float(10,6) DEFAULT NULL,
-  `status` enum('new','online','timeout','dns fail','disconnected','reconnecting','disabled') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'new',
+  `status` enum('new','online','timeout','dns fail','disconnected','reconnecting','disabled','old version') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'new',
   latency smallint(5) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL,
   max_players smallint(5) unsigned NOT NULL,
