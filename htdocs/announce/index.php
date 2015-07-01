@@ -195,6 +195,12 @@ if ($server = $query_find_server->fetch())
         exitWithMessage('Account disabled');
     }
 
+    if ('old version'===$server->status)
+    {
+        // this shouldn't happen, the game wouldn't be found above unless the version matches
+        exitWithMessage('Update required');
+    }
+
     $query_update_server = $db->prepare("
 UPDATE
     server

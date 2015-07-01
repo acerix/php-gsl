@@ -272,8 +272,8 @@ CREATE TABLE game (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 INSERT INTO game (id, `name`, version, version_url, version_url_type, created, updated) VALUES
-(1, 'Game', '0.1', NULL, NULL, '2015-01-01 05:00:00', NULL),
-(7, 'Psilly', '0.0.0', 'acerix/psilly', 'github', '2015-04-20 16:20:00', NULL);
+(1, 'Game', '0.1', NULL, NULL, '2015-04-20 16:20:00', NULL),
+(7, 'Psilly', '0.0.1', 'acerix/psilly', 'github', '2015-04-20 16:20:00', NULL);
 
 CREATE TABLE game_mode (
   id smallint(5) unsigned NOT NULL AUTO_INCREMENT,
@@ -288,7 +288,7 @@ INSERT INTO game_mode (id, game_id, `name`) VALUES
 (2, 1, 'Normal'),
 (3, 1, 'Hard'),
 (4, 1, 'Impossible'),
-(5, 2, 'Normal');
+(5, 7, 'Normal');
 
 CREATE TABLE `server` (
   id mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
@@ -300,16 +300,16 @@ CREATE TABLE `server` (
   setting bit(3) NOT NULL DEFAULT b'0',
   latitude float(10,6) DEFAULT NULL,
   longitude float(10,6) DEFAULT NULL,
-  `status` enum('new','online','timeout','dns fail','disconnected','disabled') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'new',
+  `status` enum('new','online','timeout','dns fail','disconnected','reconnecting','disabled') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'new',
   latency smallint(5) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL,
   max_players smallint(5) unsigned NOT NULL,
   `password` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
-  `session` binary(20) NOT NULL,
+  `session` binary(20) DEFAULT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated timestamp NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY name_2 (`name`),
+  UNIQUE KEY game_mode_id (game_mode_id,`name`),
   KEY country (country_id),
   KEY `status` (`status`),
   KEY latitude (latitude),
@@ -319,8 +319,8 @@ CREATE TABLE `server` (
   FULLTEXT KEY `name` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
-INSERT INTO server (id, game_mode_id, `name`, host, port, country_id, setting, latitude, longitude, `status`, latency, players, max_players, created, updated) VALUES
-(1, 1, 'Game', 'localhost', 42002, 124, b'101', 45.421398, -75.691902, 'disabled', 1, NULL, 0, '2015-01-01 00:00:00', NULL);
+INSERT INTO server (id, game_mode_id, `name`, host, port, country_id, setting, latitude, longitude, `status`, latency, players, max_players, `password`, `session`, created, updated) VALUES
+(1, 1, 'Game', 'localhost', 42002, 124, b'111', 45.421398, -75.691902, 'disabled', 1, NULL, 0, '', NULL, '2015-04-20 16:20:00', NULL);
 
 CREATE TABLE server_log (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -328,7 +328,7 @@ CREATE TABLE server_log (
   created timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
   nonce binary(20) DEFAULT NULL,
   `status` enum('new','online') NOT NULL DEFAULT 'new',
-  latency smallint(5) unsigned DEFAULT NULL,
+  latency decimal(5,3) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL,
   PRIMARY KEY (id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -340,6 +340,6 @@ CREATE TABLE server_setting (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 INSERT INTO server_setting (id, setting) VALUES
-(1, 'Password'),
-(2, 'Dedicated'),
+(1, 'Dedicated'),
+(2, 'Password'),
 (3, 'Anti-Cheat');

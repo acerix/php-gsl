@@ -39,7 +39,7 @@ LEFT JOIN
 WHERE
     game_mode_id = ?
 AND
-    status NOT IN ('disconnected','disabled')
+    status NOT IN ('disconnected','disabled','old version')
 ");
 
 $query_insert_server_log = $db->prepare("
@@ -64,7 +64,7 @@ SET
 WHERE
     id = ?
 AND
-    status NOT IN ('disconnected','disabled')
+    status NOT IN ('disconnected','disabled','old version')
 ");
 
 $udp_socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);

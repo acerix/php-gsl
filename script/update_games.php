@@ -71,6 +71,28 @@ WHERE
             )
         );
         $game->version = $new_version;
+
+        // Disconnect all servers of this game
+        $query_expire_game_servers = $db->prepare("
+UPDATE
+    server
+JOIN
+    game_mode
+        ON
+            game_mode.id = server.game_mode
+SET
+    server.status = 'old version',
+    server.session = NULL,
+    server.updated = NOW()
+WHERE
+    game_mode.game_id = ?
+");
+        $query_update_game_version->execute(
+            array(
+                $game->id
+            )
+        );
+
     }
 
     /*
