@@ -56,11 +56,11 @@ WHERE
 
 while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
-    print('received ' . $receive_len . ' bytes' . PHP_EOL);
+    print('received ' . $receive_len . ' bytes from ' . $ip . PHP_EOL);
 
     if ('pong'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
 
-        print('pong' . PHP_EOL);
+        print('looks like a pong' . PHP_EOL);
 
         $server_log_id = current(unpack('V',substr($buf,4,4)));
         $key = substr($buf,8,20);
@@ -74,8 +74,12 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 
         if ($server_log = $query_server_log->fetch())
         {
+            print('found server_log_id' . PHP_EOL);
             if ($key===hash('sha1', $server_log->session . $server_log->nonce, true))
             {
+
+                print('sha1 validated' . PHP_EOL);
+
                 $query_update_server_log->execute(
                     array(
                         $player_count,
@@ -91,9 +95,12 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
                     )
                 );
 
+                print('database updated' . PHP_EOL);
+
             }
         }
 
     }
+    print(PHP_EOL . 'waiting for next packet' . PHP_EOL . PHP_EOL);
 }
 
