@@ -56,6 +56,8 @@ WHERE
 
 while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
+    print('received ' . $receive_len . ' bytes' . PHP_EOL);
+
     if ('pong'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
 
         print('pong' . PHP_EOL);
