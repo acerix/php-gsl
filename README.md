@@ -56,7 +56,7 @@ PHP game server list.  Game servers can advertise their info, and players can ge
 
 ### URLs
 * The default server announce URL is: http://yourserver/announce/
-* Game List: /games/games.bson
-* Mode List for a game named "Game": /games/Game/modes.bson
-* Server List for the "Hard" mode of "Game": /games/Game/Hard/servers.bson
-* BSON encoding is recommended for production as it is more compact, but the file extensions can be changed to ".json" for the JSON format which is easier to read
+* Game List: /games/games.msgpack
+* Mode List for a game named "Game": /games/Game/modes.msgpack
+* Server List for the "Hard" mode of "Game": /games/Game/Hard/servers.msgpack
+* MessagePack encoding is recommended for production as it is more compact, but the file extensions can be changed to ".json" for the JSON format which is easier to read
