@@ -105,10 +105,10 @@ WHERE
     );
 }
 
-if (!empty($gsl_config['generate_bson']))
+if (!empty($gsl_config['generate_msgpack']))
 file_put_contents(
-    '../htdocs/games/games.bson',
-    bson_encode($games)
+    '../htdocs/games/games.msgpack',
+    msgpack_pack($games)
 );
 
 if (!empty($gsl_config['generate_json']))

@@ -198,10 +198,10 @@ while ($game = $query_games->fetch())
 
         }
 
-        if (!empty($gsl_config['generate_bson']))
+        if (!empty($gsl_config['generate_msgpack']))
         file_put_contents(
-            $game_mode->dir.'/servers.bson',
-            bson_encode($servers)
+            $game_mode->dir.'/servers.msgpack',
+            msgpack_pack($servers)
         );
 
         if (!empty($gsl_config['generate_json']))

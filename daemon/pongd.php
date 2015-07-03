@@ -77,7 +77,6 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
             print('found server_log_id' . PHP_EOL);
             if ($key===hash('sha1', $server_log->session . $server_log->nonce, true))
             {
-
                 print('sha1 validated' . PHP_EOL);
 
                 $query_update_server_log->execute(
@@ -98,6 +97,12 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
                 print('database updated' . PHP_EOL);
 
             }
+            else {
+                print('invalid sha1!' . PHP_EOL);
+            }
+        }
+        else {
+            print('invalid server_log_id!' . PHP_EOL);
         }
 
     }

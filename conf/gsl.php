@@ -9,8 +9,8 @@ $gsl_config = array(
     'pong_ip' => '69.172.205.90',
     'pong_port' => 42001,
 
-    // Whether to generate BSON, JSON, or both
-    'generate_bson' => TRUE, // better for production, needs mongodb currently
+    // Format for exporting data: MessagePack, JSON, or both
+    'generate_msgpack' => function_exists('msgpack_pack'), // better for production, needs msgpack.so
     'generate_json' => TRUE, // helpful for debugging
 
 );
