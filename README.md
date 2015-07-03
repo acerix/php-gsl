@@ -2,6 +2,25 @@
 PHP game server list.  Game servers can advertise their info, and players can get a list of active servers, which is updated regularly by pinging the servers.
 
 
+
+## Getting a Server List from a GSL
+
+### Sample Requests
+
+#### Get Game List
+* http://gsl.pow7.com/games/games.json
+* http://gsl.pow7.com/games/games.msgpack
+
+#### Get Game Mode List
+* http://gsl.pow7.com/games/Game/modes.json
+* http://gsl.pow7.com/games/Game/modes.msgpack
+
+#### Get Game Mode Server List
+* http://gsl.pow7.com/games/Game/Hard/servers.json
+* http://gsl.pow7.com/games/Game/Hard/servers.msgpack
+
+
+
 ## Connecting Your Game Server to a GSL Server
 
 ### Requirements
