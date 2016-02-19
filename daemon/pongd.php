@@ -1,11 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+/*
+* Listens for ping responses and updates server status
+*/
+
 require dirname(__FILE__).'/../conf/db.php';
 
-/*
-* Listen for ping responses and update server status
-*/
+require dirname(__FILE__).'/../vendor/autoload.php';
+require dirname(__FILE__).'/../proto/ping.php';
+require dirname(__FILE__).'/../proto/pong.php';
 
 $receive_len = 30;
 
@@ -58,38 +62,36 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
     print('received ' . $receive_len . ' bytes from ' . $ip . PHP_EOL);
 
-    if ('pong'===substr($buf,0,4)&&$receive_len===strlen($buf)) {
+    if ('pong'===substr($buf,0,4)) {
 
         print('looks like a pong' . PHP_EOL);
-
-        $server_log_id = current(unpack('V',substr($buf,4,4)));
-        $key = substr($buf,8,20);
-        $player_count = current(unpack('v',substr($buf,28,2)));
-
+        
+        $pong = Protobuf::decode('Pong', substr($buf,4));
+        
         $query_server_log->execute(
             array(
-                $server_log_id
+                $pong->server_log_id
             )
         );
 
         if ($server_log = $query_server_log->fetch())
         {
             print('found server_log_id' . PHP_EOL);
-            if ($key===hash('sha1', $server_log->session . $server_log->nonce, true))
+            if ($pong->key===hash('sha1', $server_log->session . $server_log->nonce, true))
             {
                 print('sha1 validated' . PHP_EOL);
 
                 $query_update_server_log->execute(
                     array(
-                        $player_count,
-                        $server_log_id
+                        $pong->player_count,
+                        $pong->server_log_id
                     )
                 );
 
                 $query_update_server->execute(
                     array(
-                        $server_log_id,
-                        $player_count,
+                        $pong->server_log_id,
+                        $pong->player_count,
                         $server_log->server_id
                     )
                 );

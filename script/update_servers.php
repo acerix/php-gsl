@@ -1,8 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+/*
+* Sends pings to servers and updates the server list
+*/
+
 require dirname(__FILE__).'/../conf/gsl.php';
 require dirname(__FILE__).'/../conf/db.php';
+
+require dirname(__FILE__).'/../vendor/autoload.php';
+require dirname(__FILE__).'/../proto/ping.php';
 
 $query_games = $db->prepare("
 SELECT
@@ -151,8 +158,14 @@ while ($game = $query_games->fetch())
 
 
             // Send packet
-
-            $send_buffer = 'ping' . $r->session . pack('V',$server_log_id) . $nonce;
+            
+            $ping_proto = new Ping();
+            
+            $ping_proto->server_log_id = $server_log_id;
+            $ping_proto->session = $r->session;
+            $ping_proto->nonce = $nonce;
+            
+            $send_buffer = 'ping' . $ping_proto->serialize();
 
 /*
             print(

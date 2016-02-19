@@ -1,0 +1,6 @@
+
+message Pong {
+    required int32 server_log_id = 1;
+    required string key = 2;
+    required int32 player_count = 3;
+}
