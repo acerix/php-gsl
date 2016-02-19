@@ -1,6 +1,6 @@
 
 message Ping {
     required int32 server_log_id = 1;
-    required string session = 2;
-    required string nonce = 3;
+    required bytes session = 2;
+    required bytes nonce = 3;
 }

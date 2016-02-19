@@ -159,13 +159,18 @@ while ($game = $query_games->fetch())
 
             // Send packet
             
-            $ping_proto = new Ping();
+            $ping = new Ping();
             
-            $ping_proto->server_log_id = $server_log_id;
-            $ping_proto->session = $r->session;
-            $ping_proto->nonce = $nonce;
+            $ping->server_log_id = $server_log_id;
+            $ping->session = $r->session;
+            $ping->nonce = $nonce;
             
-            $send_buffer = 'ping' . $ping_proto->serialize();
+            //$send_buffer = 'ping' . $ping->serialize();
+            $send_buffer = 'ping' . base64_encode($ping->serialize());
+            
+            
+            //$ping = \DrSlump\Protobuf\Protobuf::decode('Ping', substr($send_buffer, 4));  var_dump($ping);
+        
 
 /*
             print(

@@ -66,7 +66,7 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 
         print('looks like a pong' . PHP_EOL);
         
-        $pong = Protobuf::decode('Pong', substr($buf,4));
+        $pong = \DrSlump\Protobuf\Protobuf::decode('Pong', substr($buf,4));
         
         $query_server_log->execute(
             array(
