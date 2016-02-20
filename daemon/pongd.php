@@ -58,6 +58,8 @@ WHERE
     id = ?
 ");
 
+print('pongd started' . PHP_EOL);
+
 while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
 {
     print('received ' . $receive_len . ' bytes from ' . $ip . PHP_EOL);
@@ -77,6 +79,7 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
         if ($server_log = $query_server_log->fetch())
         {
             print('found server_log_id' . PHP_EOL);
+            
             if ($pong->key===hash('sha1', $server_log->session . $server_log->nonce, true))
             {
                 print('sha1 validated' . PHP_EOL);
@@ -110,4 +113,3 @@ while (socket_recvfrom($udp_socket, $buf, $receive_len, 0, $ip, $port))
     }
     print(PHP_EOL . 'waiting for next packet' . PHP_EOL . PHP_EOL);
 }
-

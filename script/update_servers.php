@@ -165,30 +165,18 @@ while ($game = $query_games->fetch())
             $ping->session = $r->session;
             $ping->nonce = $nonce;
             
-            //$send_buffer = 'ping' . $ping->serialize();
-            $send_buffer = 'ping' . base64_encode($ping->serialize());
+            var_dump(unpack('H*', $r->session));
+            
+            $send_buffer = b'ping' . $ping->serialize();
+            
+            //$hex_data = unpack('H*', $send_buffer); var_dump($hex_data[1]);
             
             
-            //$ping = \DrSlump\Protobuf\Protobuf::decode('Ping', substr($send_buffer, 4));  var_dump($ping);
-        
-
-/*
-            print(
-            'ping'
-            . ' session:' . current(unpack('H*',$r->session))
-            . ' id:' . $server_log_id
-            . ' nonce:' . current(unpack('H*',$nonce))
-            . ' ip:' .  $ip
-            . ' port:' . $r->port
-            . PHP_EOL
-            );
-*/
-
             socket_sendto(
                 $udp_socket,
                 $send_buffer,
                 strlen($send_buffer),
-                0,
+                MSG_EOR,
                 $ip,
                 $r->port
             );
