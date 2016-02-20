@@ -165,7 +165,7 @@ while ($game = $query_games->fetch())
             $ping->session = $r->session;
             $ping->nonce = $nonce;
             
-            var_dump(unpack('H*', $r->session));
+            //var_dump(unpack('H*', $r->session));
             
             $send_buffer = b'ping' . $ping->serialize();
             
