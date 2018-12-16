@@ -239,6 +239,7 @@ else
 INSERT INTO
     server
 (
+    game_id,
     game_mode_id,
     name,
     host,
@@ -261,11 +262,13 @@ VALUES
     ?,
     ?,
     ?,
+    ?,
     ?
 )
 ");
     $query_insert_server->execute(
         array(
+            $game->id,
             $game_mode->id,
             $_REQUEST['name'],
             $hostname,

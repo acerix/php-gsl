@@ -62,7 +62,7 @@ PHP game server list.  Game servers can advertise their info, and players can ge
 ## Running Your Own GSL Server
 
 ### Requirements
-* Web Server with PHP 5.6+ including extensions: pdo_mysql, sockets, mongo
+* Web Server with PHP 5.6+ including extensions: pdo_mysql, sockets
 * MySQL 5.6+
 
 ### Installation
