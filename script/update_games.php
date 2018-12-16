@@ -36,6 +36,7 @@ while ($game = $query_games->fetch())
             break;
 
         case 'github':
+	    break;
             $latest_release = json_decode(file_get_contents(
                 'https://api.github.com/repos/'.$game->version_url.'/releases/latest',
                 FALSE,

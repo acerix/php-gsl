@@ -3,7 +3,7 @@
 $gsl_config = array(
 
     // GSL Annount URL
-    'announce_url' => 'http://gsl.pow7.com/announce/',
+    'announce_url' => 'https://gsl.pow7.com/announce/',
 
     // IP and port of GSL pong server
     'pong_ip' => '69.172.205.90',
