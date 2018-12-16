@@ -1,18 +1,11 @@
-
 CREATE TABLE country (
-  id smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  common_name varchar(255) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
-  code2 char(2) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
-  code3 char(3) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+`id` smallint(5) unsigned NOT NULL,
+  common_name varchar(127) DEFAULT NULL,
+  code2 char(2) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  code3 char(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   latitude float NOT NULL,
-  longitude float NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE KEY code2 (code2),
-  UNIQUE KEY code3 (code3),
-  UNIQUE KEY common_name (common_name),
-  KEY latitude (latitude),
-  KEY longitude (longitude)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  longitude float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO country (id, common_name, code2, code3, latitude, longitude) VALUES
 (4, 'Afghanistan', 'AF', 'AFG', 33, 65),
@@ -259,87 +252,110 @@ INSERT INTO country (id, common_name, code2, code3, latitude, longitude) VALUES
 (894, 'Zambia', 'ZM', 'ZMB', -15, 30);
 
 CREATE TABLE game (
-  id tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  version varchar(255) NOT NULL,
-  version_url varchar(255) DEFAULT NULL,
-  version_url_type enum('url','github') DEFAULT NULL,
+`id` tinyint(3) unsigned NOT NULL,
+  `name` varchar(127) NOT NULL,
+  version varchar(31) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  version_url varchar(127) DEFAULT NULL,
+  version_url_type enum('url','github') CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  UNIQUE KEY `name` (`name`),
-  FULLTEXT KEY name_2 (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  updated timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO game (id, `name`, version, version_url, version_url_type, created, updated) VALUES
-(1, 'Game', '0.1', NULL, NULL, '2015-04-20 16:20:00', NULL),
-(7, 'Psilly', '0.0.1', 'acerix/psilly', 'github', '2015-04-20 16:20:00', NULL);
+INSERT INTO game (id, name, version, version_url, version_url_type, created, updated) VALUES
+(1, 'Game', '0.1', NULL, NULL, '2019-04-20 16:20:00', NULL);
 
 CREATE TABLE game_mode (
-  id smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+`id` smallint(5) unsigned NOT NULL,
   game_id tinyint(3) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL,
-  PRIMARY KEY (id),
-  KEY game_id (game_id)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  `name` varchar(127) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO game_mode (id, game_id, `name`) VALUES
+INSERT INTO game_mode (id, game_id, name) VALUES
 (1, 1, 'Beginner'),
-(2, 1, 'Normal'),
 (3, 1, 'Hard'),
 (4, 1, 'Impossible'),
-(5, 7, 'Normal');
+(2, 1, 'Normal');
 
 CREATE TABLE `server` (
-  id mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+`id` mediumint(8) unsigned NOT NULL,
+  game_id tinyint(3) unsigned NOT NULL,
   game_mode_id smallint(3) unsigned NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `host` varchar(255) NOT NULL,
+  `name` varchar(63) NOT NULL,
+  `host` varchar(127) NOT NULL,
   `port` smallint(5) unsigned NOT NULL,
   country_id smallint(5) unsigned DEFAULT NULL,
   setting bit(3) NOT NULL DEFAULT b'0',
   latitude float(10,6) DEFAULT NULL,
   longitude float(10,6) DEFAULT NULL,
-  `status` enum('new','online','timeout','dns fail','disconnected','reconnecting','disabled','old version') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'new',
+  `status` enum('new','online','timeout','dns fail','disconnected','reconnecting','disabled') CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'new',
   latency smallint(5) unsigned DEFAULT NULL,
   players smallint(5) unsigned DEFAULT NULL,
   max_players smallint(5) unsigned NOT NULL,
-  `password` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `password` varchar(127) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `session` binary(20) DEFAULT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  UNIQUE KEY game_mode_id (game_mode_id,`name`),
-  KEY country (country_id),
-  KEY `status` (`status`),
-  KEY latitude (latitude),
-  KEY longitude (longitude),
-  KEY game_id (game_mode_id),
-  KEY setting (setting),
-  FULLTEXT KEY `name` (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-
-INSERT INTO server (id, game_mode_id, `name`, host, port, country_id, setting, latitude, longitude, `status`, latency, players, max_players, `password`, `session`, created, updated) VALUES
-(1, 1, 'Game', 'localhost', 42002, 124, b'111', 45.421398, -75.691902, 'disabled', 1, NULL, 0, '', NULL, '2015-04-20 16:20:00', NULL);
+  updated timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE server_log (
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+`id` int(10) unsigned NOT NULL,
   server_id mediumint(8) unsigned NOT NULL,
   created timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
   nonce binary(20) DEFAULT NULL,
-  `status` enum('new','online') NOT NULL DEFAULT 'new',
-  latency decimal(8,3) unsigned DEFAULT NULL,
-  players smallint(5) unsigned DEFAULT NULL,
-  PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `status` enum('new','online') CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'new',
+  latency smallint(5) unsigned DEFAULT NULL,
+  players smallint(5) unsigned DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE server_setting (
-  id tinyint(2) unsigned NOT NULL AUTO_INCREMENT,
-  setting varchar(255) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+`id` tinyint(2) unsigned NOT NULL,
+  setting varchar(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO server_setting (id, setting) VALUES
 (1, 'Dedicated'),
 (2, 'Password'),
 (3, 'Anti-Cheat');
+
+ALTER TABLE country
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY code2 (code2), ADD UNIQUE KEY code3 (code3), ADD UNIQUE KEY common_name (common_name);
+
+ALTER TABLE game
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `name` (`name`);
+
+ALTER TABLE game_mode
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY game_mode_in_game (game_id,`name`), ADD KEY game_id (game_id);
+
+ALTER TABLE server
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY game_id (game_id), ADD UNIQUE KEY game_mode_id (game_mode_id), ADD UNIQUE KEY country_id (country_id);
+
+ALTER TABLE server_log
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY server_id (server_id);
+
+ALTER TABLE server_setting
+ ADD PRIMARY KEY (`id`);
+
+
+ALTER TABLE country
+MODIFY `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT;
+ALTER TABLE game
+MODIFY `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT;
+ALTER TABLE game_mode
+MODIFY `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT;
+ALTER TABLE server
+MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT;
+ALTER TABLE server_log
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+ALTER TABLE server_setting
+MODIFY `id` tinyint(2) unsigned NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE game_mode
+ADD CONSTRAINT game_mode_ibfk_1 FOREIGN KEY (game_id) REFERENCES game (`id`);
+
+ALTER TABLE server
+ADD CONSTRAINT server_ibfk_1 FOREIGN KEY (game_id) REFERENCES game (`id`),
+ADD CONSTRAINT server_ibfk_2 FOREIGN KEY (game_mode_id) REFERENCES game_mode (`id`),
+ADD CONSTRAINT server_ibfk_3 FOREIGN KEY (country_id) REFERENCES country (`id`);
+
+ALTER TABLE server_log
+ADD CONSTRAINT server_log_ibfk_1 FOREIGN KEY (server_id) REFERENCES server (`id`);
