@@ -167,6 +167,7 @@ while ($game = $query_games->fetch())
             
             //var_dump(unpack('H*', $r->session));
             
+	    // @todo make this something godot will accept
             $send_buffer = b'ping' . $ping->serialize();
             
             //$hex_data = unpack('H*', $send_buffer); var_dump($hex_data[1]);

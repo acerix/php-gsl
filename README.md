@@ -48,7 +48,7 @@ PHP game server list.  Game servers can advertise their info, and players can ge
 * "time": When the server response was sent in unixtime
 * A successful connection will also include:
 * "session": Your server session ID, encoded in HEX
-* "pong_ip", "pong_port": Where your server needs to respond to when receiving a ping from the GSL
+* "pong_ip", "pong_port": Where your server needs to respond when receiving a ping from the GSL
 
 #### Disconnect
 * http://gsl.pow7.com/announce/disconnect/?session=0000000000000000000000000000000000000000

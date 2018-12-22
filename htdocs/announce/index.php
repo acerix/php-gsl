@@ -201,6 +201,11 @@ if ($server = $query_find_server->fetch())
         exitWithMessage('Update required');
     }
 
+    // $reconnect_status = 'reconnecting';
+
+    // skip pinging the server and just assume it's online for now
+    $reconnect_status = 'online';
+
     $query_update_server = $db->prepare("
 UPDATE
     server
@@ -212,7 +217,7 @@ SET
     latitude = ?,
     longitude = ?,
     max_players = ?,
-    status = 'reconnecting',
+    status = ?,
     updated = NOW()
 WHERE
     id = ?
@@ -226,6 +231,7 @@ WHERE
             $latitude,
             $longitude,
             $max_players,
+            $reconnect_status,
             $server->id
         )
     );
