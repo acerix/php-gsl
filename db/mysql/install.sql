@@ -1,3 +1,8 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 CREATE TABLE country (
 `id` smallint(5) unsigned NOT NULL,
   common_name varchar(127) DEFAULT NULL,
@@ -262,7 +267,8 @@ CREATE TABLE game (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO game (id, name, version, version_url, version_url_type, created, updated) VALUES
-(1, 'Game', '0.1', NULL, NULL, '2019-04-20 16:20:00', NULL);
+(1, 'Game', '0.1', NULL, NULL, '2015-04-20 16:20:00', NULL),
+(42, 'Psworld', '0.0.1', 'Psgame/psworld-client', 'github', '2018-04-20 16:20:00', NULL);
 
 CREATE TABLE game_mode (
 `id` smallint(5) unsigned NOT NULL,
@@ -274,7 +280,8 @@ INSERT INTO game_mode (id, game_id, name) VALUES
 (1, 1, 'Beginner'),
 (3, 1, 'Hard'),
 (4, 1, 'Impossible'),
-(2, 1, 'Normal');
+(2, 1, 'Normal'),
+(420, 42, 'Sandbox');
 
 CREATE TABLE `server` (
 `id` mediumint(8) unsigned NOT NULL,
@@ -327,10 +334,10 @@ ALTER TABLE game_mode
  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY game_mode_in_game (game_id,`name`), ADD KEY game_id (game_id);
 
 ALTER TABLE server
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY game_id (game_id), ADD UNIQUE KEY game_mode_id (game_mode_id), ADD UNIQUE KEY country_id (country_id);
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY game_server_name (game_id,`name`), ADD KEY game_id (game_id), ADD KEY game_mode_id (game_mode_id), ADD KEY country_id (country_id);
 
 ALTER TABLE server_log
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY server_id (server_id);
+ ADD PRIMARY KEY (`id`), ADD KEY server_id (server_id);
 
 ALTER TABLE server_setting
  ADD PRIMARY KEY (`id`);
@@ -359,3 +366,5 @@ ADD CONSTRAINT server_ibfk_3 FOREIGN KEY (country_id) REFERENCES country (`id`);
 
 ALTER TABLE server_log
 ADD CONSTRAINT server_log_ibfk_1 FOREIGN KEY (server_id) REFERENCES server (`id`);
+COMMIT;
+

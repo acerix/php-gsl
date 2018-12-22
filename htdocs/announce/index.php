@@ -168,14 +168,14 @@ SELECT
 FROM
     server
 WHERE
-    game_mode_id = ?
+    game_id = ?
 AND
     name = ?
 ");
 
 $query_find_server->execute(
     array(
-        $game_mode->id,
+        $game->id,
         $_REQUEST['name']
     )
 );
